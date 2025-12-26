@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年1月全球赛事日历</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .calendar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            border-bottom: 5px solid #ff6b6b;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .header h2 {
+            margin: 8px 0 0;
+            font-size: 20px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #f1f5f9;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .month-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .month-year {
+            font-size: 20px;
+            color: #64748b;
+            font-weight: 400;
+        }
+        
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #334155;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+        }
+        
+        .weekday {
+            padding: 8px;
+        }
+        
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: minmax(180px, auto);
+            border-top: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+        }
+        
+        .day-cell {
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px;
+            overflow: hidden;
+            position: relative;
+            min-height: 180px;
+        }
+        
+        .day-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .day-of-week {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 400;
+        }
+        
+        .events-list {
+            max-height: 140px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .event-item {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            border-left: 3px solid #3b82f6;
+            background-color: #f8fafc;
+            break-inside: avoid;
+        }
+        
+        .event-league {
+            font-weight: 700;
+            color: #1e40af;
+            font-size: 10px;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+        
+        .event-match {
+            color: #0f172a;
+        }
+        
+        .event-highlight {
+            font-weight: 700;
+            color: #dc2626;
+        }
+        
+        .event-premier { border-left-color: #38003c; }
+        .event-ucl { border-left-color: #0053b3; }
+        .event-uel { border-left-color: #6c1d45; }
+        .event-seriea { border-left-color: #0066a1; }
+        .event-laliga { border-left-color: #ff0000; }
+        .event-bundesliga { border-left-color: #d2000f; }
+        .event-ligue1 { border-left-color: #091c3e; }
+        .event-nba { border-left-color: #1d428a; }
+        .event-nhl { border-left-color: #ce1126; }
+        .event-nfl { border-left-color: #013369; }
+        .event-ausopen { border-left-color: #00843d; }
+        .event-ashes { border-left-color: #a5acaf; }
+        .event-aleague { border-left-color: #1c3f94; }
+        .event-snooker { border-left-color: #702963; }
+        
+        .other-day {
+            background-color: #f8fafc;
+            color: #94a3b8;
+        }
+        
+        .other-day .day-number {
+            color: #94a3b8;
+        }
+        
+        .today {
+            background-color: #f0f9ff;
+        }
+        
+        .today .day-number {
+            color: #0369a1;
+            border-bottom-color: #38bdf8;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 30px;
+            background-color: #f1f5f9;
+            border-top: 2px solid #e2e8f0;
+            margin-top: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            font-size: 11px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 6px;
+            border-radius: 2px;
+        }
+        
+        .continuous-events {
+            padding: 20px 30px;
+            background-color: #fef3c7;
+            border-radius: 6px;
+            margin-top: 20px;
+            page-break-before: always;
+        }
+        
+        .continuous-events h3 {
+            margin-top: 0;
+            color: #92400e;
+            font-size: 16px;
+        }
+        
+        .print-button {
+            display: none;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+            
+            .calendar-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .print-button {
+                display: none;
+            }
+            
+            .continuous-events {
+                page-break-before: always;
+                border: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="header">
+            <h1>2026年1月全球赛事日历</h1>
+            <h2>英超、欧冠、NBA、澳网、NHL等全球顶级赛事完整赛程</h2>
+        </div>
+        
+        <div class="month-header">
+            <div class="month-title">一月</div>
+            <div class="month-year">2026</div>
+        </div>
+        
+        <div class="weekdays">
+            <div class="weekday">星期日</div>
+            <div class="weekday">星期一</div>
+            <div class="weekday">星期二</div>
+            <div class="weekday">星期三</div>
+            <div class="weekday">星期四</div>
+            <div class="weekday">星期五</div>
+            <div class="weekday">星期六</div>
+        </div>
+        
+        <div class="days-grid" id="calendar-days">
+            <!-- 日历天数将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #38003c;"></div>
+                <span>英超联赛</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #0053b3;"></div>
+                <span>欧冠联赛</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #0066a1;"></div>
+                <span>意甲联赛</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ff0000;"></div>
+                <span>西甲联赛</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #d2000f;"></div>
+                <span>德甲联赛</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #091c3e;"></div>
+                <span>法甲联赛</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #1d428a;"></div>
+                <span>NBA</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ce1126;"></div>
+                <span>NHL</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #013369;"></div>
+                <span>NFL</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #00843d;"></div>
+                <span>澳网</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #1c3f94;"></div>
+                <span>澳超</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #702963;"></div>
+                <span>斯诺克</span>
+            </div>
+        </div>
+        
+        <div class="continuous-events">
+            <h3>每日持续进行的赛事（整个1月）</h3>
+            <p><strong>NHL</strong>：每日均有比赛</p>
+            <p><strong>NBA</strong>：每日均有比赛（多伦多猛龙队1月共16场常规赛：7个主场，9个客场）</p>
+            <p><strong>澳超</strong>：密集赛程（1.1-1.6、1.9-1.11、1.16-1.18、1.23-1.26、1.30-1.31）</p>
+            <p><strong>澳网</strong>：1月12日-17日开幕周，1月18日-2月1日正赛阶段每日进行</p>
+        </div>
+    </div>
+
+    <script>
+        // 2026年1月的赛事数据
+        const eventsData = {
+            "2026-01-01": [
+                {league: "英超", match: "第19轮：利物浦 vs 利兹联", highlight: false},
+                {league: "英超", match: "第19轮：水晶宫 vs 富勒姆", highlight: false},
+                {league: "英超", match: "第19轮：布伦特福德 vs 热刺", highlight: false},
+                {league: "英超", match: "第19轮：桑德兰 vs 曼城", highlight: false},
+                {league: "NBA", match: "丹佛掘金 vs 多伦多猛龙（主场）", highlight: false},
+                {league: "澳超", match: "西悉尼流浪者 vs 麦克阿瑟", highlight: false},
+                {league: "NHL", match: "波士顿棕熊 vs 埃德蒙顿油人", highlight: false},
+                {league: "NHL", match: "费城飞人 vs 卡尔加里火焰", highlight: false}
+            ],
+            "2026-01-02": [
+                {league: "意甲", match: "第18轮：卡利亚里 vs AC米兰", highlight: false},
+                {league: "澳超", match: "墨尔本胜利 vs 珀斯光荣", highlight: false},
+                {league: "澳超", match: "布里斯班狮吼 vs 惠灵顿凤凰", highlight: false},
+                {league: "NHL", match: "温尼伯喷气机 vs 多伦多枫叶", highlight: false},
+                {league: "NHL", match: "华盛顿首都 vs 渥太华参议员", highlight: false}
+            ],
+            "2026-01-03": [
+                {league: "英超", match: "第20轮：阿斯顿维拉 vs 诺丁汉森林", highlight: false},
+                {league: "英超", match: "第20轮：伯恩茅斯 vs 阿森纳", highlight: false},
+                {league: "英超", match: "第20轮：布莱顿 vs 伯恩利", highlight: false},
+                {league: "英超", match: "第20轮：狼队 vs 西汉姆联", highlight: false},
+                {league: "西甲", match: "第18轮开始（1月3日-5日）", highlight: false},
+                {league: "法甲", match: "图卢兹 vs 朗斯（+3场）", highlight: false},
+                {league: "澳超", match: "赛事持续（1.1-1.6密集期）", highlight: false}
+            ],
+            "2026-01-04": [
+                {league: "英超", match: "第20轮：利兹联 vs 曼联", highlight: true},
+                {league: "英超", match: "第20轮：曼城 vs 切尔西", highlight: true},
+                {league: "英超", match: "第20轮：富勒姆 vs 利物浦", highlight: false},
+                {league: "英超", match: "第20轮：埃弗顿 vs 布伦特福德", highlight: false},
+                {league: "英超", match: "第20轮：热刺 vs 桑德兰", highlight: false},
+                {league: "英超", match: "第20轮：纽卡斯尔 vs 水晶宫", highlight: false},
+                {league: "意甲", match: "第18轮：亚特兰大 vs 罗马", highlight: false},
+                {league: "意甲", match: "第18轮：拉齐奥 vs 那不勒斯", highlight: true},
+                {league: "西甲", match: "第18轮：西班牙人 vs 巴塞罗那（加泰德比）", highlight: true},
+                {league: "西甲", match: "第18轮：皇家马德里 vs 皇家贝蒂斯", highlight: false},
+                {league: "法甲", match: "摩纳哥 vs 奥林匹克里昂（+5场）", highlight: false},
+                {league: "NBA", match: "亚特兰大老鹰 vs 多伦多猛龙（主场）", highlight: false},
+                {league: "板球", match: "男子骨灰杯第五轮（1月4日-8日，悉尼板球场）", highlight: false}
+            ],
+            "2026-01-05": [
+                {league: "意甲", match: "第18轮：国际米兰 vs 博洛尼亚", highlight: false},
+                {league: "西甲", match: "第18轮：皇家社会 vs 马德里竞技", highlight: false},
+                {league: "NFL", match: "季后赛：16场比赛", highlight: true}
+            ],
+            "2026-01-06": [
+                {league: "意甲", match: "第19轮：周中赛开始（1月6日-9日）", highlight: false},
+                {league: "NBA", match: "亚特兰大老鹰 vs 多伦多猛龙（主场）", highlight: false},
+                {league: "澳超", match: "赛事持续（1.1-1.6密集期）", highlight: false}
+            ],
+            "2026-01-07": [
+                {league: "英超", match: "第21轮：曼城 vs 布莱顿", highlight: false},
+                {league: "英超", match: "第21轮：伯恩利 vs 曼联", highlight: false},
+                {league: "英超", match: "第21轮：富勒姆 vs 切尔西", highlight: false},
+                {league: "英超", match: "第21轮：纽卡斯尔 vs 利兹联", highlight: false},
+                {league: "意甲", match: "第19轮：尤文图斯 vs 萨索洛", highlight: false}
+            ],
+            "2026-01-08": [
+                {league: "英超", match: "第21轮：阿森纳 vs 利物浦", highlight: true},
+                {league: "意甲", match: "第19轮：帕尔马 vs 国际米兰", highlight: false},
+                {league: "意甲", match: "第19轮：佛罗伦萨 vs 拉齐奥", highlight: false},
+                {league: "意甲", match: "第19轮：那不勒斯 vs 维罗纳", highlight: false},
+                {league: "板球", match: "男子骨灰杯第五轮结束", highlight: false}
+            ],
+            "2026-01-09": [
+                {league: "澳超", match: "布里斯班狮吼 vs 奥克兰FC（卫冕冠军首战）", highlight: true},
+                {league: "澳超", match: "密集赛程（1.9-1.11）", highlight: false}
+            ],
+            "2026-01-10": [
+                {league: "德甲", match: "拜耳勒沃库森 vs 斯图加特（+6场）", highlight: false},
+                {league: "澳超", match: "墨尔本胜利 vs 西悉尼流浪者（焦点战）", highlight: true},
+                {league: "NFL", match: "通配符赛开始（1月10日-12日）", highlight: true}
+            ],
+            "2026-01-11": [
+                {league: "意甲", match: "第20轮：佛罗伦萨 vs AC米兰", highlight: false},
+                {league: "西甲", match: "第19轮：巴塞罗那 vs 马德里竞技（可能调整）", highlight: true},
+                {league: "西甲", match: "第19轮：毕尔巴鄂竞技 vs 皇家马德里", highlight: false},
+                {league: "德甲", match: "拜仁慕尼黑 vs 沃尔夫斯堡（+3场）", highlight: false},
+                {league: "澳超", match: "墨尔本城 vs 纽卡斯尔喷气机（焦点战）", highlight: true},
+                {league: "斯诺克", match: "大师赛开始（1月11日-18日）", highlight: false}
+            ],
+            "2026-01-12": [
+                {league: "意甲", match: "第20轮：国际米兰 vs 那不勒斯", highlight: true},
+                {league: "NBA", match: "费城76人 vs 多伦多猛龙（主场）", highlight: false},
+                {league: "澳网", match: "开幕周开始（1月12日-17日）", highlight: true}
+            ],
+            "2026-01-13": [
+                {league: "意甲", match: "第20轮：尤文图斯 vs 克雷莫纳", highlight: false},
+                {league: "西甲", match: "第19轮：塞维利亚 vs 皇家维戈塞尔塔", highlight: false},
+                {league: "NBA", match: "费城76人 vs 多伦多猛龙（主场）", highlight: false}
+            ],
+            "2026-01-14": [
+                {league: "意甲", match: "补赛（第16轮）：那不勒斯 vs 帕尔马", highlight: true},
+                {league: "德甲", match: "斯图加特 vs 法兰克福（+4场）", highlight: false}
+            ],
+            "2026-01-15": [
+                {league: "意甲", match: "补赛（第16轮）：国际米兰 vs 莱切", highlight: true},
+                {league: "德甲", match: "科隆 vs 拜仁慕尼黑（+5场）", highlight: false}
+            ],
+            "2026-01-16": [
+                {league: "意甲", match: "补赛（第16轮）：科莫 vs AC米兰", highlight: false}
+            ],
+            "2026-01-17": [
+                {league: "英超", match: "第22轮：曼联 vs 曼城（曼市德比）", highlight: true},
+                {league: "英超", match: "第22轮：切尔西 vs 布伦特福德", highlight: false},
+                {league: "英超", match: "第22轮：利物浦 vs 伯恩利", highlight: false},
+                {league: "英超", match: "第22轮：诺丁汉森林 vs 阿森纳", highlight: false},
+                {league: "西甲", match: "第20轮：皇家马德里 vs 莱万特", highlight: false},
+                {league: "法甲", match: "里昂 vs 布雷斯特（+5场）", highlight: false},
+                {league: "德甲", match: "RB莱比锡 vs 拜仁慕尼黑（+6场）", highlight: false},
+                {league: "意甲", match: "第21轮：乌迪内斯 vs 国际米兰", highlight: false},
+                {league: "NFL", match: "分区决赛开始（1月17日-18日）", highlight: true}
+            ],
+            "2026-01-18": [
+                {league: "英超", match: "第22轮：阿斯顿维拉 vs 埃弗顿", highlight: false},
+                {league: "英超", match: "第22轮：狼队 vs 纽卡斯尔", highlight: false},
+                {league: "西甲", match: "第20轮：马德里竞技 vs 阿拉维斯", highlight: false},
+                {league: "法甲", match: "南特 vs 巴黎FC（+4场）", highlight: false},
+                {league: "意甲", match: "第21轮：AC米兰 vs 莱切", highlight: false},
+                {league: "意甲", match: "第21轮：尤文图斯 vs 卡利亚里", highlight: false},
+                {league: "斯诺克", match: "大师赛结束", highlight: false},
+                {league: "澳网", match: "正赛阶段开始（1月18日-2月1日）", highlight: true}
+            ],
+            "2026-01-19": [
+                {league: "西甲", match: "第20轮：皇家社会 vs 巴塞罗那", highlight: true}
+            ],
+            "2026-01-20": [
+                {league: "欧冠", match: "第7轮：国际米兰 vs 阿森纳", highlight: true},
+                {league: "欧冠", match: "第7轮：皇家马德里 vs 摩纳哥", highlight: false},
+                {league: "欧冠", match: "第7轮：托特纳姆热刺 vs 多特蒙德", highlight: false},
+                {league: "欧冠", match: "第7轮：凯拉特 vs 布鲁日", highlight: false},
+                {league: "欧冠", match: "第7轮：博多格林特 vs 曼城", highlight: false},
+                {league: "NBA", match: "马刺 vs 火箭", highlight: false},
+                {league: "NBA", match: "湖人 vs 掘金", highlight: false}
+            ],
+            "2026-01-21": [
+                {league: "欧冠", match: "第7轮：马赛 vs 利物浦", highlight: false},
+                {league: "欧冠", match: "第7轮：尤文图斯 vs 本非卡", highlight: false},
+                {league: "欧冠", match: "第7轮：布拉格斯拉维亚 vs 巴塞罗那", highlight: false},
+                {league: "欧冠", match: "第7轮：拜仁慕尼黑 vs 圣吉罗斯联合", highlight: false}
+            ],
+            "2026-01-22": [
+                {league: "NBA", match: "勇士 vs 独行侠", highlight: false},
+                {league: "NBA", match: "湖人 vs 快船", highlight: false}
+            ],
+            "2026-01-23": [
+                {league: "意甲", match: "第22轮：国际米兰 vs 比萨", highlight: false},
+                {league: "欧联", match: "第7轮：18场比赛", highlight: true},
+                {league: "澳超", match: "密集赛程（1.23-1.26）", highlight: false}
+            ],
+            "2026-01-24": [
+                {league: "英超", match: "第23轮：赛事进行中（1月24日-25日）", highlight: false},
+                {league: "法甲", match: "马赛 vs 朗斯（+3场）", highlight: false},
+                {league: "德甲", match: "圣保利 vs 汉堡（+8场）", highlight: false},
+                {league: "德甲", match: "柏林联 vs 多特蒙德", highlight: false},
+                {league: "NBA", match: "尼克斯 vs 76人", highlight: false},
+                {league: "NBA", match: "湖人 vs 独行侠", highlight: false}
+            ],
+            "2026-01-25": [
+                {league: "英超", match: "第23轮：阿森纳 vs 曼联", highlight: true},
+                {league: "英超", match: "第23轮：水晶宫 vs 切尔西", highlight: false},
+                {league: "英超", match: "第23轮：纽卡斯尔 vs 阿斯顿维拉", highlight: false},
+                {league: "英超", match: "第23轮：伯恩茅斯 vs 利物浦", highlight: false},
+                {league: "西甲", match: "第21轮：比利亚雷亚尔 vs 皇家马德里", highlight: true},
+                {league: "西甲", match: "第21轮：巴塞罗那 vs 皇家奥维耶多", highlight: false},
+                {league: "西甲", match: "第21轮：马德里竞技 vs 皇家马洛卡", highlight: false},
+                {league: "法甲", match: "里尔 vs 斯特拉斯堡（+5场）", highlight: false},
+                {league: "意甲", match: "第22轮：罗马 vs AC米兰", highlight: true},
+                {league: "意甲", match: "第22轮：尤文图斯 vs 那不勒斯", highlight: true},
+                {league: "NFL", match: "联合会冠军赛", highlight: true}
+            ],
+            "2026-01-26": [
+                {league: "澳超", match: "密集赛程进行中", highlight: false}
+            ],
+            "2026-01-28": [
+                {league: "欧冠", match: "第8轮：巴塞罗那 vs 哥本哈根", highlight: false},
+                {league: "欧冠", match: "第8轮：阿森纳 vs 凯拉特", highlight: false},
+                {league: "欧冠", match: "第8轮：利物浦 vs 卡拉巴赫", highlight: false},
+                {league: "欧冠", match: "第8轮：曼城 vs 加拉塔萨雷", highlight: false},
+                {league: "欧冠", match: "第8轮：巴黎圣日耳曼 vs 纽卡斯尔联", highlight: false},
+                {league: "欧冠", match: "第8轮：多特蒙德 vs 国际米兰", highlight: true},
+                {league: "欧冠", match: "第8轮：拜耳勒沃库森 vs 比利亚雷亚尔", highlight: false},
+                {league: "欧冠", match: "第8轮：飞利浦大球场 vs 拜仁慕尼黑", highlight: false}
+            ],
+            "2026-01-30": [
+                {league: "欧联", match: "第8轮/收官战：18场比赛", highlight: true},
+                {league: "澳超", match: "密集赛程（1.30-1.31）", highlight: false}
+            ],
+            "2026-01-31": [
+                {league: "英超", match: "预告：切尔西 vs 西汉姆联", highlight: false},
+                {league: "英超", match: "预告：利兹联 vs 阿森纳", highlight: false},
+                {league: "英超", match: "预告：狼队 vs 伯恩茅斯", highlight: false},
+                {league: "法甲", match: "朗斯 vs 勒阿福尔（+3场）", highlight: false},
+                {league: "德甲", match: "汉堡 vs 拜仁慕尼黑（+7场）", highlight: false},
+                {league: "德甲", match: "法兰克福 vs 拜耳勒沃库森", highlight: false},
+                {league: "澳超", match: "密集赛程进行中", highlight: false}
+            ]
+        };
+
+        // 星期几的中文名称
+        const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+        
+        // 生成2026年1月的日历
+        function generateCalendar() {
+            const daysGrid = document.getElementById('calendar-days');
+            daysGrid.innerHTML = '';
+            
+            // 2026年1月1日是星期四（索引4）
+            const firstDayOfMonth = 4; // 星期四
+            
+            // 2026年1月有31天
+            const daysInMonth = 31;
+            
+            // 填充前面的空白单元格
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'day-cell other-day';
+                emptyCell.innerHTML = `
+                    <div class="day-number">
+                        <span></span>
+                        <span class="day-of-week">${weekdays[i]}</span>
+                    </div>
+                    <div class="events-list"></div>
+                `;
+                daysGrid.appendChild(emptyCell);
+            }
+            
+            // 填充1月份的每一天
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(2026, 0, day);
+                const dayOfWeek = date.getDay();
+                const dateString = `2026-01-${day.toString().padStart(2, '0')}`;
+                const dayEvents = eventsData[dateString] || [];
+                
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+                
+                // 如果是周末，添加特殊样式
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    dayCell.classList.add('today');
+                }
+                
+                let eventsHTML = '';
+                dayEvents.forEach(event => {
+                    const leagueClass = getLeagueClass(event.league);
+                    const highlightClass = event.highlight ? 'event-highlight' : '';
+                    
+                    eventsHTML += `
+                        <div class="event-item ${leagueClass}">
+                            <div class="event-league">${event.league}</div>
+                            <div class="event-match ${highlightClass}">${event.match}</div>
+                        </div>
+                    `;
+                });
+                
+                dayCell.innerHTML = `
+                    <div class="day-number">
+                        <span>${day}</span>
+                        <span class="day-of-week">${weekdays[dayOfWeek]}</span>
+                    </div>
+                    <div class="events-list">
+                        ${eventsHTML}
+                    </div>
+                `;
+                
+                daysGrid.appendChild(dayCell);
+            }
+        }
+        
+        // 获取联赛对应的CSS类
+        function getLeagueClass(league) {
+            const leagueMap = {
+                "英超": "event-premier",
+                "欧冠": "event-ucl",
+                "欧联": "event-uel",
+                "意甲": "event-seriea",
+                "西甲": "event-laliga",
+                "德甲": "event-bundesliga",
+                "法甲": "event-ligue1",
+                "NBA": "event-nba",
+                "NHL": "event-nhl",
+                "NFL": "event-nfl",
+                "澳网": "event-ausopen",
+                "板球": "event-ashes",
+                "澳超": "event-aleague",
+                "斯诺克": "event-snooker"
+            };
+            
+            return leagueMap[league] || "event-premier";
+        }
+        
+        // 页面加载完成后生成日历
+        document.addEventListener('DOMContentLoaded', generateCalendar);
+        
+        // 打印功能
+        function printCalendar() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
